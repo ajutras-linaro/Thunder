@@ -36,8 +36,6 @@ option(VIRTUALINPUT
         "Include VirtualInput for external applications." OFF)
 option(COMPOSITORCLIENT
         "Include a graphics backend abstraction for external applications." OFF)
-option(JSONRPC
-        "Include JSONRPC C++ utility library for external applications." ON)
 option(PROCESSCONTAINERS
         "Include containerization in the build." OFF)
 option(TEST_APPS
@@ -126,10 +124,6 @@ endif()
 
 if(VIRTUALINPUT)
     add_subdirectory(virtualinput)
-endif()
-
-if(JSONRPC)
-    add_subdirectory(jsonrpc)
 endif()
 
 if(COMPOSITORCLIENT)
