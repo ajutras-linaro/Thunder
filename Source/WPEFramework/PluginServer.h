@@ -1259,7 +1259,7 @@ namespace PluginHost {
                         Clear();
 
                         // Red the file and parse it into this object.
-                        FromFile(storage);
+                        IElement::FromFile(storage);
 
                         // Convey the real JSON struct information into the specific services.
                         ServiceMap::Iterator index(_services.Services());
@@ -1322,7 +1322,7 @@ namespace PluginHost {
                         }
 
                         // Persist the currently set information
-                        ToFile(storage);
+                        IElement::ToFile(storage);
 
                         storage.Close();
                     } else {
