@@ -589,6 +589,8 @@ private:
         {
             int ret = 0;
 
+            TRACE_L1("Decrypt (length: %u)", encryptedDataLength);
+
             // This works, because we know that the Audio and the Video streams are
             // fed from
             // the same process, so they will use the same critial section and thus
