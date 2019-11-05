@@ -316,9 +316,6 @@ namespace Wayland {
     /*static*/ std::string Display::_runtimeDir;
     /*static*/ Display::DisplayMap Display::_displays;
     /*static*/ Display::WaylandSurfaceMap Display::_waylandSurfaces;
-    /*static*/ EGLenum Display::ImageImplementation::_eglTarget;
-    /*static*/ PFNEGLCREATEIMAGEKHRPROC Display::ImageImplementation::_eglCreateImagePtr = nullptr;
-    /*static*/ PFNEGLDESTROYIMAGEKHRPROC Display::ImageImplementation::_eglDestroyImagePtr = nullptr;
 
     static void printEGLConfiguration(EGLDisplay dpy, EGLConfig config)
     {
@@ -640,36 +637,15 @@ namespace Wayland {
         : _refcount(1)
         , _display(&display)
     {
-        if (_eglCreateImagePtr == nullptr) {
-
-            const char* eglExtension = eglQueryString(_display->_eglDisplay, EGL_EXTENSIONS);
-            if (strstr(eglExtension, "EGL_KHR_image_base")) {
-                _eglTarget = EGL_GL_TEXTURE_2D_KHR;
-
-                _eglCreateImagePtr = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
-                // Keep Destroy pointer for later reference.
-                _eglDestroyImagePtr = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
-            } else {
-#if !defined(EGL_GL_TEXTURE_2D) // FIXME: Added to build for not supporting platform too, but has to be removed once support is ready
-#define EGL_GL_TEXTURE_2D EGL_GL_TEXTURE_2D_KHR
-#endif
-                _eglTarget = EGL_GL_TEXTURE_2D;
-
-                _eglCreateImagePtr = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImage"));
-                // Keep Destroy pointer for later reference.
-                _eglDestroyImagePtr = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImage"));
-            }
-        }
-
-        _eglImage = _eglCreateImagePtr(_display->_eglDisplay, _display->_eglContext, _eglTarget,
+        _eglImageKHR = eglCreateImageKHR(_display->_eglDisplay, _display->_eglContext, EGL_GL_TEXTURE_2D_KHR,
             reinterpret_cast<EGLClientBuffer>(texture), 0);
     }
 
     Display::ImageImplementation::~ImageImplementation()
     {
         if (_display != nullptr) {
-            _eglDestroyImagePtr(_display->_eglDisplay, _eglImage);
-    }
+            eglDestroyImageKHR(_display->_eglDisplay, _eglImageKHR);
+        }
     }
 
     static void* Processor(void* data)
