@@ -7,7 +7,7 @@
 #define ENABLE_SECURE_DATA_PATH 1
 
 OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, GstBuffer* buffer, GstBuffer* subSampleBuffer, const uint32_t subSampleCount,
-                                               GstBuffer* IV, GstBuffer* keyID, uint32_t initWithLast15)
+                                               GstBuffer* IV, GstBuffer* keyID, uint32_t initWithLast15, GstBuffer* decBuffer)
 {
     OpenCDMError result (ERROR_INVALID_SESSION);
 
@@ -55,7 +55,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
         GstMapInfo decMap;
         printf("Mapping decBuffer");
         if (gst_buffer_map(decBuffer, &decMap, static_cast<GstMapFlags>(GST_MAP_READWRITE)) == false) {
-            gst_buffer_unmap(buffer, &map);
+            gst_buffer_unmap(buffer, &dataMap);
             gst_buffer_unmap(IV, &ivMap);
             gst_buffer_unmap(keyID, &keyIDMap);
             printf("Invalid decrypted buffer.\n");
@@ -111,7 +111,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
             if (subSampleMapping == nullptr) {
                 printf("Failed to allocate memory for the sub-sample mapping");
                 // AJ-TODO: More cleaning is required
-                gst_buffer_unmap(subSamplesBuffer, &subSamplesMap);
+                gst_buffer_unmap(subSampleBuffer, &sampleMap);
                 return (ERROR_INVALID_DECRYPT_BUFFER);
             }
 #endif
@@ -172,6 +172,8 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
                 index += inEncrypted;
                 total += inClear + inEncrypted;
             }
+
+            free(encryptedData);
 #else
             if(secure) {
                 result = opencdm_session_decrypt(session, mappedData, mappedDataSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15, subSampleMapping, (2 * subSampleCount), secureFd, secureSize);
@@ -181,7 +183,6 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
 #endif
 
             gst_byte_reader_free(reader);
-            free(encryptedData);
             gst_buffer_unmap(subSampleBuffer, &sampleMap);
         } else {
             result = opencdm_session_decrypt(session, mappedData, mappedDataSize,  mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15/*, NULL, 0, -1, 0*/);
