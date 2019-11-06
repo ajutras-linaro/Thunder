@@ -52,17 +52,20 @@ target_sources(${TARGET} PRIVATE adapter/${CDMI_ADAPTER_IMPLEMENTATION}/open_cdm
 
 find_package(GSTREAMER REQUIRED)
 find_package(GSTREAMER_BASE REQUIRED)
+find_package(GSTREAMER_ALLOCATORS REQUIRED)
 
 target_link_libraries(${TARGET}
         PRIVATE
         ${GSTREAMER_LIBRARIES}
-        ${GSTREAMER_BASE_LIBRARIES}
+        ${GSTREAMER_BASE_LIBRARIiES}
+        ${GSTREAMER_ALLOCATORS_LIBRARIiES}
         )
 
 target_include_directories( ${TARGET}
         PRIVATE
         ${GSTREAMER_INCLUDES}
         ${GSTREAMER_BASE_INCLUDES}
+        ${GSTREAMER_ALLOCATORS_INCLUDES}
         )
 
 if (${CDMI_ADAPTER_IMPLEMENTATION} STREQUAL "broadcom-svp")
