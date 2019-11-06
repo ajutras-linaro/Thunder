@@ -4,6 +4,8 @@
 #include <gst/gst.h>
 #include <gst/base/gstbytereader.h>
 
+#define ENABLE_SECURE_DATA_PATH 1
+
 OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, GstBuffer* buffer, GstBuffer* subSampleBuffer, const uint32_t subSampleCount,
                                                GstBuffer* IV, GstBuffer* keyID, uint32_t initWithLast15)
 {
