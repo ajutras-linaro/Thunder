@@ -585,11 +585,13 @@ private:
         uint32_t Decrypt(uint8_t* encryptedData, uint32_t encryptedDataLength,
             const uint8_t* ivData, uint16_t ivDataLength,
             const uint8_t* keyId, uint16_t keyIdLength,
-            uint32_t initWithLast15 /* = 0 */)
+            uint32_t initWithLast15 /* = 0 */,
+            uint32_t *subSampleMapping, const uint32_t subSampleCount,
+            int secureFd, uint32_t secureSize)
         {
             int ret = 0;
 
-            TRACE_L1("Decrypt (length: %u)", encryptedDataLength);
+            TRACE_L1("Decrypt (length: %u, secureFd: %d, secureSize: %u)", encryptedDataLength, secureFd, secureSize);
 
             // This works, because we know that the Audio and the Video streams are
             // fed from

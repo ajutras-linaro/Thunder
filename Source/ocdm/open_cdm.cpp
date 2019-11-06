@@ -661,7 +661,7 @@ OpenCDMError opencdm_session_decrypt(struct OpenCDMSession* session,
 
     if (session != nullptr) {
         result = static_cast<OpenCDMError>(session->Decrypt(
-            encrypted, encryptedLength, IV, IVLength, keyId, keyIdLength, initWithLast15));
+            encrypted, encryptedLength, IV, IVLength, keyId, keyIdLength, initWithLast15, subSampleMapping, subSampleCount, secureFd, secureSize));
     }
 
     return (result);
