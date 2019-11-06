@@ -9,10 +9,12 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
 {
     OpenCDMError result (ERROR_INVALID_SESSION);
 
+#ifdef ENABLE_SECURE_DATA_PATH
     uint32_t *subSampleMapping = nullptr;
     gint secureFd = -1;
     uint32_t secureSize = 0;
     gboolean secure = FALSE;
+#endif
 
     if (session != nullptr) {
         GstMapInfo dataMap;
@@ -40,10 +42,6 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
                return (ERROR_INVALID_DECRYPT_BUFFER);
            }
         }
-
-#ifdef ENABLE_SECURE_DATA_PATH
-
-#endif
 
         uint8_t *mappedData = reinterpret_cast<uint8_t* >(dataMap.data);
         uint32_t mappedDataSize = static_cast<uint32_t >(dataMap.size);
@@ -196,10 +194,10 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
 #ifdef ENABLE_SECURE_DATA_PATH
         if(decMem) gst_memory_unref(decMem);
         gst_buffer_unmap(decBuffer, &decMap);
-#endif
         if(subSampleMapping != nullptr) {
             free(subSampleMapping);
         }
+#endif
     }
 
     return (result);
