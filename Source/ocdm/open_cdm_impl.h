@@ -734,13 +734,15 @@ public:
     uint32_t Decrypt(uint8_t* encryptedData, const uint32_t encryptedDataLength,
         const uint8_t* ivData, uint16_t ivDataLength,
         const uint8_t* keyId, const uint16_t keyIdLength,
-        uint32_t initWithLast15)
+        uint32_t initWithLast15,
+        uint32_t *subSampleMapping, const uint32_t subSampleCount,
+        int secureFd, uint32_t secureSize)
     {
         uint32_t result = OpenCDMError::ERROR_INVALID_DECRYPT_BUFFER;
         if (_decryptSession != nullptr) {
             result = _decryptSession->Decrypt(encryptedData, encryptedDataLength, ivData,
                 ivDataLength, keyId, keyIdLength,
-                initWithLast15);
+                initWithLast15, subSampleMapping, subSampleCount, secureFd, secureSize);
             if(result)
             {
                 TRACE_L1("Decrypt() failed with return code: %x", result);
