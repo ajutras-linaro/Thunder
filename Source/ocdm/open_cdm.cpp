@@ -328,7 +328,7 @@ uint32_t OpenCdm::Decrypt(uint8_t* encrypted, const uint32_t encryptedLength,
 
     return (_session != nullptr
             ? _session->Decrypt(encrypted, encryptedLength, IV, IVLength,
-                  nullptr, 0, initWithLast15)
+                  nullptr, 0, initWithLast15, NULL, 0, -1, 0)
             : 1);
 }
 
@@ -345,7 +345,7 @@ uint32_t OpenCdm::Decrypt(uint8_t* encrypted, const uint32_t encryptedLength,
             _session = new OpenCDMSession(_implementation->Session(keyId, keyIdLength));
         }
         return (_session->Decrypt(encrypted, encryptedLength, IV, IVLength, keyId,
-            keyIdLength, initWithLast15));
+            keyIdLength, initWithLast15, NULL, 0, -1, 0));
     }
 
     return (1);
