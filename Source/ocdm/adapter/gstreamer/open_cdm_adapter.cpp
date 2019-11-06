@@ -14,6 +14,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
     gint secureFd = -1;
     uint32_t secureSize = 0;
     gboolean secure = FALSE;
+    uint32_t offset = 0;
 #endif
 
     if (session != nullptr) {
@@ -119,7 +120,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
             uint16_t inClear = 0;
             uint32_t inEncrypted = 0;
             uint32_t totalEncrypted = 0;
-            uint32_t offset = 0;
+            offset = 0;
             for (unsigned int position = 0; position < subSampleCount; position++) {
 
                 gst_byte_reader_get_uint16_be(reader, &inClear);
