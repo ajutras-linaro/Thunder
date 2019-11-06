@@ -3,6 +3,7 @@
 
 #include <gst/gst.h>
 #include <gst/base/gstbytereader.h>
+#include <gst/allocators/gstdmabuf.h>
 
 #define ENABLE_SECURE_DATA_PATH 1
 
