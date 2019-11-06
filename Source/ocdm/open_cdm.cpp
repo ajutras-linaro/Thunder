@@ -653,7 +653,9 @@ OpenCDMError opencdm_session_decrypt(struct OpenCDMSession* session,
     const uint32_t encryptedLength,
     const uint8_t* IV, const uint16_t IVLength,
     const uint8_t* keyId, const uint16_t keyIdLength,
-    uint32_t initWithLast15 /* = 0 */)
+    uint32_t initWithLast15 /* = 0 */,
+    uint32_t *subSampleMapping, const uint32_t subSampleCount,
+    int secureFd, uint32_t secureSize)
 {
     OpenCDMError result(ERROR_INVALID_SESSION);
 
