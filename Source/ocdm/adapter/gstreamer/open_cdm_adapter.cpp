@@ -54,7 +54,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
 
 #ifdef ENABLE_SECURE_DATA_PATH
         GstMapInfo decMap;
-        printf("Mapping decBuffer");
+        printf("Mapping decBuffer.\n");
         if (gst_buffer_map(decBuffer, &decMap, static_cast<GstMapFlags>(GST_MAP_READWRITE)) == false) {
             gst_buffer_unmap(buffer, &dataMap);
             gst_buffer_unmap(IV, &ivMap);
