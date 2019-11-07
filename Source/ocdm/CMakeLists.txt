@@ -17,6 +17,7 @@ set(PUBLIC_HEADERS
         adapter/open_cdm_adapter.h
         open_cdm_ext.h
         Module.h
+        socket/socket_client_helper.h
         )
 
 target_link_libraries(${TARGET}
