@@ -4,7 +4,7 @@
 #include "IOCDM.h"
 #include "Module.h"
 #include "open_cdm.h"
-#include "socket_client_helper.h"
+#include "helper/socket_client_helper.h"
 
 using namespace WPEFramework;
 
