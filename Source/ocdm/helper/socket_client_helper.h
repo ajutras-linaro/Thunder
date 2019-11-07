@@ -33,7 +33,7 @@
 #define SOCKET_INVALID_FD (-1)
 #define SOCKET_SEND_TIMEOUT (1) // second(s)
 
-namespace media {
+namespace WPEFramework {
 
 class SocketClient
 {
@@ -63,6 +63,6 @@ private:
   int m_SocketFd;
 };
 
-}  // namespace media
+}  // namespace WPEFramework
 
 #endif  // #ifdef __SOCKET_CLIENT_HELPER_H__

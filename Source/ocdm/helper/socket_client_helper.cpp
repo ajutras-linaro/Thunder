@@ -41,7 +41,7 @@
 
 #include "socket_client_helper.h"
 
-namespace media {
+namespace WPEFramework {
 
 int SocketClient::Connect(int f_SocketChannelId)
 {
@@ -154,4 +154,4 @@ handle_error:
   return status;
 }
 
-}  // namespace media
+}  // namespace WPEFramework
