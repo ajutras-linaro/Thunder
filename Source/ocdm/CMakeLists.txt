@@ -49,6 +49,7 @@ else()
 endif ()
 
 target_sources(${TARGET} PRIVATE adapter/${CDMI_ADAPTER_IMPLEMENTATION}/open_cdm_adapter.cpp)
+target_sources(${TARGET} PRIVATE helper/socket_client_helper.cpp)
 
 find_package(GSTREAMER REQUIRED)
 find_package(GSTREAMER_BASE REQUIRED)
