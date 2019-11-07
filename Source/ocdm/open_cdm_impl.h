@@ -616,7 +616,7 @@ private:
                 InitWithLast15(initWithLast15);
                 Write(encryptedDataLength, encryptedData);
 
-                socket.SendFileDescriptor();
+                socket.SendFileDescriptor(secureFd, secureSize);
 
                 // This will trigger the OpenCDMIServer to decrypt this memory...
                 Produced();
