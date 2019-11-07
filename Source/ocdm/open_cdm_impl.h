@@ -4,6 +4,7 @@
 #include "IOCDM.h"
 #include "Module.h"
 #include "open_cdm.h"
+#include "socket_client_helper.h"
 
 using namespace WPEFramework;
 
@@ -591,6 +592,8 @@ private:
         {
             int ret = 0;
 
+            SocketClient socket;
+
             TRACE_L1("Decrypt (length: %u, secureFd: %d, secureSize: %u)", encryptedDataLength, secureFd, secureSize);
 
             // This works, because we know that the Audio and the Video streams are
@@ -612,6 +615,8 @@ private:
                 KeyId(static_cast<uint8_t>(keyIdLength), keyId);
                 InitWithLast15(initWithLast15);
                 Write(encryptedDataLength, encryptedData);
+
+                socket.SendFileDescriptor();
 
                 // This will trigger the OpenCDMIServer to decrypt this memory...
                 Produced();

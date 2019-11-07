@@ -34,7 +34,10 @@
 #include <sys/un.h>
 
 #include <fstream>
-#include <cdm_logging.h>
+#include <iostream>
+//#include <cdm_logging.h>
+
+#define CDM_DLOG() std::cout
 
 #include "socket_client_helper.h"
 
