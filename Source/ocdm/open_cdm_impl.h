@@ -552,6 +552,7 @@ private:
     static OpenCDMAccessor* _singleton;
 };
 
+
 struct OpenCDMSession {
 protected:
     OpenCDMSession(const OpenCDMSession&) = delete;

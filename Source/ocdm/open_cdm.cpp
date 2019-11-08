@@ -30,6 +30,8 @@ using namespace WPEFramework;
 Core::CriticalSection _systemLock;
 const char EmptyString[] = { '\0' };
 
+SocketClient OpenCDMSession::DataExchange::_socket;
+
 #ifdef _MSVC_LANG
 extern "C" {
 	void ForceLinkingOfOpenCDM() 
