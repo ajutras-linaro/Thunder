@@ -651,7 +651,7 @@ private:
 
     private:
         bool _busy;
-        SocketClient _socket; /* Used to send the secure file descriptor to the OCDM plugin */
+        static SocketClient _socket; /* Used to send the secure file descriptor to the OCDM plugin */
     };
 
 public:

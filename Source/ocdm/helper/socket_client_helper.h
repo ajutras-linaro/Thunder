@@ -51,10 +51,11 @@ public:
   int Connect(int f_SocketChannelId);
   
   void Disconnect(void) {
-    if(m_SocketFd >= 0) {
+    // AJ-TODO: disconnect when the last user is destroyed
+    /*if(m_SocketFd >= 0) {
       close(m_SocketFd);
       m_SocketFd = SOCKET_INVALID_FD;
-    }
+    }*/
   }
 	
   int SendFileDescriptor(int f_SecureFd, uint32_t f_Size);

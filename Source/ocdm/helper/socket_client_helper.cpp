@@ -50,8 +50,9 @@ int SocketClient::Connect(int f_SocketChannelId)
   struct timeval timeout_tv;
 	
   if(m_SocketFd >= 0) {
-    CDM_DLOG() << "Socket connection already established, closing connection";
-    Disconnect();
+    CDM_DLOG() << "[AJ] Socket connection already established, reuse connection";
+    //Disconnect();
+    return status;
   }
 
   if(f_SocketChannelId < 0) {
