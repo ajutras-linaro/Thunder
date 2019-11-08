@@ -572,6 +572,12 @@ private:
 
             TRACE_L1("Constructing buffer client side: %p - %s", this,
                 bufferName.c_str());
+
+            // AJ-TODO: Use unique number (use buffer number?)
+            TRACE_L1("Connect to socket (for SDP)");
+            if(_socket.Connect(0) != 0) {
+                TRACE_L1("Cannot connect to OCDM plugin (for SDP)");
+            }
         }
         virtual ~DataExchange()
         {
@@ -591,8 +597,6 @@ private:
             int secureFd, uint32_t secureSize)
         {
             int ret = 0;
-
-            SocketClient socket;
 
             TRACE_L1("Decrypt (length: %u, secureFd: %d, secureSize: %u)", encryptedDataLength, secureFd, secureSize);
 
@@ -616,7 +620,9 @@ private:
                 InitWithLast15(initWithLast15);
                 Write(encryptedDataLength, encryptedData);
 
-                socket.SendFileDescriptor(secureFd, secureSize);
+                if(_socket.SendFileDescriptor(secureFd, secureSize) != 0) {
+                    TRACE_L1("Cannot send secure file descriptor");
+                }
 
                 // This will trigger the OpenCDMIServer to decrypt this memory...
                 Produced();
@@ -645,6 +651,7 @@ private:
 
     private:
         bool _busy;
+        SocketClient _socket; /* Used to send the secure file descriptor to the OCDM plugin */
     };
 
 public:
