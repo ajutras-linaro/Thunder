@@ -30,7 +30,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
         GstMapInfo ivMap;
         if (gst_buffer_map(IV, &ivMap, (GstMapFlags) GST_MAP_READ) == false) {
             gst_buffer_unmap(buffer, &dataMap);
-            printf("Invalid IV buffer.\n");
+            printf("[AJ] Invalid IV buffer.\n");
             return (ERROR_INVALID_DECRYPT_BUFFER);
         }
 
@@ -42,7 +42,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
            if (gst_buffer_map(keyID, &keyIDMap, (GstMapFlags) GST_MAP_READ) == false) {
                gst_buffer_unmap(buffer, &dataMap);
                gst_buffer_unmap(IV, &ivMap);
-               printf("Invalid keyID buffer.\n");
+               printf("[AJ] Invalid keyID buffer.\n");
                return (ERROR_INVALID_DECRYPT_BUFFER);
            }
         }
@@ -54,12 +54,12 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
 
 #ifdef ENABLE_SECURE_DATA_PATH
         GstMapInfo decMap;
-        printf("Mapping decBuffer.\n");
+        printf("[AJ] Mapping decBuffer.\n");
         if (gst_buffer_map(decBuffer, &decMap, static_cast<GstMapFlags>(GST_MAP_READWRITE)) == false) {
             gst_buffer_unmap(buffer, &dataMap);
             gst_buffer_unmap(IV, &ivMap);
             gst_buffer_unmap(keyID, &keyIDMap);
-            printf("Invalid decrypted buffer.\n");
+            printf("[AJ] Invalid decrypted buffer.\n");
             return (ERROR_INVALID_DECRYPT_BUFFER);
         }
 
@@ -74,21 +74,21 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
 
         // Retrieve secure ION file descriptor
         if(gst_buffer_n_memory(decBuffer) != 1) {
-            printf("WARNING: Decrypted GstBuffer does not have exactly one GstMemory block");
+            printf("[AJ] WARNING: Decrypted GstBuffer does not have exactly one GstMemory block\n");
         }
         GstMemory *decMem = gst_buffer_get_memory(decBuffer, 0);
         {
             const gchar *mem_type = decMem->allocator->mem_type;
-            printf("GstMemory type is %s", mem_type);
-            printf("GstMemory has %u bytes", decMem->size);
+            printf("[AJ] GstMemory type is %s\n", mem_type);
+            printf("[AJ] GstMemory has %u bytes\n", decMem->size);
             if(g_strcmp0(mem_type, "ionmem") == 0) {
-                printf("GstMemory is detected ionmem");
+                printf("[AJ] GstMemory is detected ionmem\n");
                 secureFd = gst_dmabuf_memory_get_fd(decMem);
                 gsize offset = 0;
                 gsize maxSize = 0;
                 secureSize = gst_memory_get_sizes (decMem, &offset, &maxSize);
                 secure = TRUE;
-                printf("Secure FD is %d, secureSize: %u, offset: %u, maxSize: %u", secureFd, secureSize, (uint32_t)offset, (uint32_t)maxSize);
+                printf("[AJ] Secure FD is %d, secureSize: %u, offset: %u, maxSize: %u\n", secureFd, secureSize, (uint32_t)offset, (uint32_t)maxSize);
             } else {
                 secureFd = -1;
                 secureSize = 0;
@@ -100,7 +100,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
         if (subSampleBuffer != nullptr) {
             GstMapInfo sampleMap;
             if (gst_buffer_map(subSampleBuffer, &sampleMap, GST_MAP_READ) == false) {
-                printf("Invalid subsample buffer.\n");
+                printf("[AJ] Invalid subsample buffer.\n");
                 gst_buffer_unmap(keyID, &keyIDMap);
                 gst_buffer_unmap(IV, &ivMap);
                 gst_buffer_unmap(buffer, &dataMap);
@@ -110,7 +110,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
 #ifdef ENABLE_SECURE_DATA_PATH
             subSampleMapping = (uint32_t *)malloc(2 * subSampleCount * sizeof(uint32_t));
             if (subSampleMapping == nullptr) {
-                printf("Failed to allocate memory for the sub-sample mapping");
+                printf("[AJ] Failed to allocate memory for the sub-sample mapping\n");
                 // AJ-TODO: More cleaning is required
                 gst_buffer_unmap(subSampleBuffer, &sampleMap);
                 return (ERROR_INVALID_DECRYPT_BUFFER);
@@ -177,16 +177,21 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
             free(encryptedData);
 #else
             if(secure) {
+                printf("[AJ] Calling opencdm_session_decrypt in secure mode\n");
                 result = opencdm_session_decrypt(session, mappedData, mappedDataSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15, subSampleMapping, (2 * subSampleCount), secureFd, secureSize);
             } else {
+                printf("[AJ] Calling opencdm_session_decrypt in non-secure mode\n");
                 result = opencdm_session_decrypt(session, mappedDecData, mappedDecDataSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15, subSampleMapping, (2 * subSampleCount), -1, 0);
             }
+            printf("[AJ] opencdm_session_decrypt returned %d\n", result);
 #endif
 
             gst_byte_reader_free(reader);
             gst_buffer_unmap(subSampleBuffer, &sampleMap);
         } else {
+            printf("[AJ] Calling opencdm_session_decrypt without sub sample data\n");
             result = opencdm_session_decrypt(session, mappedData, mappedDataSize,  mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15/*, NULL, 0, -1, 0*/);
+            printf("[AJ] opencdm_session_decrypt returned %d\n", result);
         }
 
         if (keyID != nullptr) {

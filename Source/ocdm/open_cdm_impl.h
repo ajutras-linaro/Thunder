@@ -599,7 +599,7 @@ private:
         {
             int ret = 0;
 
-            TRACE_L1("Decrypt (length: %u, secureFd: %d, secureSize: %u)", encryptedDataLength, secureFd, secureSize);
+            TRACE_L1("[AJ] Decrypt (length: %u, secureFd: %d, secureSize: %u)", encryptedDataLength, secureFd, secureSize);
 
             // This works, because we know that the Audio and the Video streams are
             // fed from
@@ -622,7 +622,7 @@ private:
                 Write(encryptedDataLength, encryptedData);
 
                 if(_socket.SendFileDescriptor(secureFd, secureSize) != 0) {
-                    TRACE_L1("Cannot send secure file descriptor");
+                    TRACE_L1("[AJ] Cannot send secure file descriptor");
                 }
 
                 // This will trigger the OpenCDMIServer to decrypt this memory...
@@ -637,6 +637,7 @@ private:
 
                     // Get the status of the last decrypt.
                     ret = Status();
+                    TRACE_L1("[AJ] Decrypt status (client side) is %d", ret);
 
                     // And free the lock, for the next production Scenario..
                     Consumed();
