@@ -124,7 +124,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
             uint32_t totalEncrypted = 0;
             for (unsigned int position = 0; position < subSampleCount; position++) {
                 uint32_t offset = 0;
-                
+
                 gst_byte_reader_get_uint16_be(reader, &inClear);
                 gst_byte_reader_get_uint32_be(reader, &inEncrypted);
                 totalEncrypted += inEncrypted;
@@ -135,11 +135,14 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
                 subSampleMapping[2 * position + 1] = inEncrypted;
 
                 // AJ-TODO For the secure content, trying to clear the encrypted content from the shared memory
+#if 0
+                // AJ-TODO: Restore this code
                 if(secure) {
                     offset += inClear;
                     memset(mappedDecData + offset, 0, inEncrypted);
                     offset += inEncrypted;
                 }
+#endif
 #endif
             }
             gst_byte_reader_set_pos(reader, 0);
@@ -176,6 +179,7 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
 
             free(encryptedData);
 #else
+            // AJ-TODO: Secure/non-secure may share the same call. It depends on the source buffer.
             if(secure) {
                 printf("[AJ] Calling opencdm_session_decrypt in secure mode\n");
                 result = opencdm_session_decrypt(session, mappedData, mappedDataSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15, subSampleMapping, (2 * subSampleCount), secureFd, secureSize);
@@ -189,8 +193,17 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
             gst_byte_reader_free(reader);
             gst_buffer_unmap(subSampleBuffer, &sampleMap);
         } else {
-            printf("[AJ] Calling opencdm_session_decrypt without sub sample data\n");
+#ifdef ENABLE_SECURE_DATA_PATH
+            if(secure) {
+                printf("[AJ] Calling opencdm_session_decrypt in secure mode (without sub sample data)\n");
+                result = opencdm_session_decrypt(session, mappedData, mappedDataSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15, NULL, 0, secureFd, secureSize);
+            } else {
+                printf("[AJ] Calling opencdm_session_decrypt in non-secure mode (without sub sample data)\n");
+                result = opencdm_session_decrypt(session, mappedDecData, mappedDecDataSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15, NULL, 0, -1, 0);
+            }
+#else
             result = opencdm_session_decrypt(session, mappedData, mappedDataSize,  mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15/*, NULL, 0, -1, 0*/);
+#endif            
             printf("[AJ] opencdm_session_decrypt returned %d\n", result);
         }
 
