@@ -65,6 +65,9 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
         uint8_t *mappedDecData = reinterpret_cast<uint8_t* >(decMap.data);
         uint32_t mappedDecDataSize = static_cast<uint32_t >(decMap.size);
 
+        printf("[AJ] mappedDataSize: %u.\n", mappedDataSize);
+        printf("[AJ] mappedDecDataSize: %u.\n", mappedDecDataSize);
+
         // Copy source data to mapped memory (shared memory used for the metadata).
         // For non-secure content, copy the data and perform the decryption in-place.
         // AJ-TODO: Secure: Copy only the clear data
