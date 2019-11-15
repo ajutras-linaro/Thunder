@@ -189,6 +189,8 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
             } else {
                 printf("[AJ] Calling opencdm_session_decrypt in non-secure mode\n");
                 result = opencdm_session_decrypt(session, mappedDecData, mappedDecDataSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15, subSampleMapping, (2 * subSampleCount), -1, 0);
+                printf("[AJ] WARNING: Ignore error in opencdm_session_decrypt (non-secure) \n");
+                result = ERROR_NONE;
             }
             printf("[AJ] opencdm_session_decrypt returned %d\n", result);
 #endif
@@ -203,6 +205,8 @@ OpenCDMError opencdm_gstreamer_session_decrypt(struct OpenCDMSession* session, G
             } else {
                 printf("[AJ] Calling opencdm_session_decrypt in non-secure mode (without sub sample data)\n");
                 result = opencdm_session_decrypt(session, mappedDecData, mappedDecDataSize, mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15, NULL, 0, -1, 0);
+                printf("[AJ] WARNING: Ignore error in opencdm_session_decrypt (non-secure) \n");
+                result = ERROR_NONE;
             }
 #else
             result = opencdm_session_decrypt(session, mappedData, mappedDataSize,  mappedIV, mappedIVSize, mappedKeyID, mappedKeyIDSize, initWithLast15/*, NULL, 0, -1, 0*/);
